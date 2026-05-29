@@ -1,0 +1,19 @@
+{
+  "PrimaryPropertyType": "Hotel",
+  "Neighborhood": "DOWNTOWN",
+  "LargestPropertyUseType": "Hotel",
+  "SecondLargestPropertyUseType": "None",
+  "ThirdLargestPropertyUseType": "None",
+  "YearBuilt_decade_cat": "1920s",
+  "YearBuilt": 1927,
+  "NumberofBuildings": 1.0,
+  "NumberofFloors": 12.0,
+  "PropertyGFATotal": 88434,
+  "PropertyGFAParking": 0,
+  "est_multi_usage": 0,
+  "has_SecondLargestPropertyUseType": 0,
+  "share_gfa_main": 1.0,
+  "has_geo": 1,
+  "log_geo_cell_150m_count": 0.6931471805599453,
+  "has_gas": 1
+}
