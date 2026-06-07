@@ -1,9 +1,7 @@
-import json
-
 from fastapi import FastAPI
 
-from app.config import SAMPLE_INPUT_PATH
 from app.model_service import load_metadata, predict_energy
+from app.sample_service import get_random_sample_input
 from app.schemas import BuildingFeatures, PredictionResponse
 
 
@@ -37,10 +35,9 @@ def model_info():
     return load_metadata()
 
 
-@app.get("/sample-input")
+@app.get("/sample-input", response_model=BuildingFeatures)
 def sample_input():
-    with open(SAMPLE_INPUT_PATH, "r", encoding="utf-8") as file:
-        return json.load(file)
+    return get_random_sample_input()
 
 
 @app.post("/predict", response_model=PredictionResponse)
