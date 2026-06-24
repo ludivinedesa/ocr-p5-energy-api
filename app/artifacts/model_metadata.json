@@ -29,6 +29,10 @@
     "log_geo_cell_150m_count",
     "has_gas"
   ],
-  "mae_oof_kbtu": 4302834.274307696,
-  "mae_oof_gwh": 1.26103624480403
+  "mae_oof_kbtu": 4305223.1,
+  "mae_oof_gwh": 1.261736,
+  "python_training_version": "3.9.0",
+  "scikit_learn_training_version": "1.5.2",
+  "artifact_rebuilt_for_api_compatibility": true,
+  "r2_oof_log": 0.69356
 }
