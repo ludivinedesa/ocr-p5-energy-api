@@ -21,3 +21,8 @@ POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", "5432"))
 POSTGRES_DB = os.getenv("POSTGRES_DB", "ocr_p5_energy")
 POSTGRES_USER = os.getenv("POSTGRES_USER", "ocr_p5_user")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+
+DATABASE_LOGGING_ENABLED = (
+    os.getenv("DATABASE_LOGGING_ENABLED", "false").strip().lower()
+    in {"1", "true", "yes", "on"}
+)
