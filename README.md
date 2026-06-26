@@ -567,11 +567,6 @@ Le développement utilise :
 - une branche principale `main` ;
 - des branches dédiées aux fonctionnalités et corrections ;
 - des Pull Requests avec validation CI ;
-- un tag de version final prévu après le merge de la version livrable.
-
-Le tag final recommandé est :
-
-```bash
-git tag -a v1.0.0 -m "Version finale du projet OCR P5"
-git push origin v1.0.0
+- un tag de version final prévu après le merge de la version livrable
+- la version livrable est identifiée par le tag `v1.1.0`./
 ```
