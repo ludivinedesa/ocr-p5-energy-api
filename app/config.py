@@ -26,3 +26,5 @@ DATABASE_LOGGING_ENABLED = (
     os.getenv("DATABASE_LOGGING_ENABLED", "false").strip().lower()
     in {"1", "true", "yes", "on"}
 )
+
+API_KEY = os.getenv("API_KEY")

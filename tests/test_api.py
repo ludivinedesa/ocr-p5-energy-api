@@ -5,6 +5,9 @@ from app.main import app
 
 client = TestClient(app)
 
+TEST_API_KEY = "test-api-key"
+API_HEADERS = {"X-API-Key": TEST_API_KEY}
+
 
 def _contains_numeric_value(obj):
     """Return True if a nested object contains at least one numeric value."""
@@ -48,6 +51,34 @@ def test_sample_input_endpoint():
     assert isinstance(response.json(), dict)
 
 
+def test_predict_rejects_missing_api_key():
+    """POST /predict rejects a request without an API key."""
+    payload = client.get("/sample-input").json()
+
+    response = client.post("/predict", json=payload)
+
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Invalid or missing API key."
+    }
+
+
+def test_predict_rejects_invalid_api_key():
+    """POST /predict rejects an invalid API key."""
+    payload = client.get("/sample-input").json()
+
+    response = client.post(
+        "/predict",
+        json=payload,
+        headers={"X-API-Key": "invalid-api-key"},
+    )
+
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Invalid or missing API key."
+    }
+
+
 def test_predict_endpoint_with_sample_input():
     sample_response = client.get("/sample-input")
 
@@ -61,7 +92,11 @@ def test_predict_endpoint_with_sample_input():
         or sample_json
     )
 
-    response = client.post("/predict", json=payload)
+    response = client.post(
+        "/predict",
+        json=payload,
+        headers=API_HEADERS,
+    )
 
     assert response.status_code == 200
 
@@ -72,6 +107,10 @@ def test_predict_endpoint_with_sample_input():
 
 
 def test_predict_endpoint_rejects_empty_payload():
-    response = client.post("/predict", json={})
+    response = client.post(
+        "/predict",
+        json={},
+        headers=API_HEADERS,
+    )
 
     assert response.status_code in (400, 422)

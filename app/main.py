@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 
 from app.config import DATABASE_LOGGING_ENABLED
 from app.model_service import load_metadata, predict_energy
@@ -10,6 +10,7 @@ from app.prediction_repository import (
     save_prediction_result,
 )
 from app.sample_service import get_random_sample_input
+from app.security import require_api_key
 from app.schemas import BuildingFeatures, PredictionResponse
 
 
@@ -51,7 +52,11 @@ def sample_input():
     return get_random_sample_input()
 
 
-@app.post("/predict", response_model=PredictionResponse)
+@app.post(
+    "/predict",
+    response_model=PredictionResponse,
+    dependencies=[Depends(require_api_key)],
+)
 def predict(features: BuildingFeatures):
     """
     Run the energy prediction and optionally log it in PostgreSQL.

@@ -1,9 +1,6 @@
 -- ============================================================
 -- OCR P5 - Seed model versions
--- Project: Déployez un modèle de Machine Learning
--- Role:
--- Inserts or updates the metadata of the model currently used
--- by the FastAPI prediction endpoint.
+-- Inserts or updates the metadata of the model used by the API.
 -- ============================================================
 
 INSERT INTO model_versions (
@@ -28,9 +25,13 @@ VALUES (
         "random_state": 42,
         "n_rows_training": 1649,
         "n_features_raw_model_input": 17,
-        "mae_oof_kbtu": 4302834.274307696,
-        "mae_oof_gwh": 1.26103624480403,
-        "status": "baseline_model"
+        "mae_oof_kbtu": 4305223.1,
+        "mae_oof_gwh": 1.261736,
+        "r2_oof_log": 0.69356,
+        "python_training_version": "3.9.0",
+        "scikit_learn_training_version": "1.5.2",
+        "artifact_rebuilt_for_api_compatibility": true,
+        "status": "active_compatible_artifact"
     }'::jsonb,
     TRUE
 )

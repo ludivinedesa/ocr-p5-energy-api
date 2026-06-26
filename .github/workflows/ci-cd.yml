@@ -14,6 +14,32 @@ jobs:
     name: Lint and test API
     runs-on: ubuntu-latest
 
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ocr_p5_energy_test
+      POSTGRES_TEST_DB: ocr_p5_energy_test
+      POSTGRES_USER: ocr_p5_user
+      POSTGRES_PASSWORD: ocr_p5_password
+      DATABASE_LOGGING_ENABLED: "false"
+      RUN_DB_INTEGRATION_TESTS: "true"
+      API_KEY: test-api-key
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ocr_p5_energy_test
+          POSTGRES_USER: ocr_p5_user
+          POSTGRES_PASSWORD: ocr_p5_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ocr_p5_user -d ocr_p5_energy_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,25 +55,61 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
 
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
       - name: Prepare logs directory
         run: mkdir -p logs
+
+      - name: Initialize PostgreSQL test database
+        env:
+          PGPASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        run: |
+          psql \
+            -v ON_ERROR_STOP=1 \
+            -h "$POSTGRES_HOST" \
+            -p "$POSTGRES_PORT" \
+            -U "$POSTGRES_USER" \
+            -d "$POSTGRES_DB" \
+            -f scripts/create_tables.sql
+
+          psql \
+            -v ON_ERROR_STOP=1 \
+            -h "$POSTGRES_HOST" \
+            -p "$POSTGRES_PORT" \
+            -U "$POSTGRES_USER" \
+            -d "$POSTGRES_DB" \
+            -f scripts/seed_model_versions.sql
 
       - name: Run Flake8 linting
         run: |
           set -o pipefail
-          flake8 app tests --count --show-source --statistics 2>&1 | tee logs/flake8.log
+          flake8 app scripts tests \
+            --count \
+            --show-source \
+            --statistics \
+            2>&1 | tee logs/flake8.log
 
       - name: Run Pytest with coverage
         run: |
           set -o pipefail
-          pytest tests -v --cov=app --cov-report=term-missing --cov-report=xml:logs/coverage.xml 2>&1 | tee logs/pytest.log
+          pytest tests -v \
+            --cov=app \
+            --cov-report=term-missing \
+            --cov-report=xml:logs/coverage.xml \
+            --cov-report=html:htmlcov \
+            2>&1 | tee logs/pytest.log
 
-      - name: Upload CI logs
+      - name: Upload CI reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ci-logs
-          path: logs/
+          name: ci-reports
+          path: |
+            logs/
+            htmlcov/
 
   deploy:
     name: Deploy to Hugging Face Space

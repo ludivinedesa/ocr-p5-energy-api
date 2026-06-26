@@ -12,6 +12,9 @@ client_without_server_exceptions = TestClient(
     raise_server_exceptions=False,
 )
 
+TEST_API_KEY = "test-api-key"
+API_HEADERS = {"X-API-Key": TEST_API_KEY}
+
 
 VALID_PAYLOAD = {
     "PrimaryPropertyType": "Hotel",
@@ -66,7 +69,11 @@ def test_predict_without_database_logging(monkeypatch):
         create_request_mock,
     )
 
-    response = client.post("/predict", json=VALID_PAYLOAD)
+    response = client.post(
+        "/predict",
+        json=VALID_PAYLOAD,
+        headers=API_HEADERS,
+    )
 
     assert response.status_code == 200
     assert response.json() == PREDICTION_RESULT
@@ -112,7 +119,11 @@ def test_predict_with_successful_database_logging(monkeypatch):
         mark_error_mock,
     )
 
-    response = client.post("/predict", json=VALID_PAYLOAD)
+    response = client.post(
+        "/predict",
+        json=VALID_PAYLOAD,
+        headers=API_HEADERS,
+    )
 
     assert response.status_code == 200
     assert response.json() == PREDICTION_RESULT
@@ -173,6 +184,7 @@ def test_predict_marks_request_as_error_when_prediction_fails(
     response = client_without_server_exceptions.post(
         "/predict",
         json=VALID_PAYLOAD,
+        headers=API_HEADERS,
     )
 
     assert response.status_code == 500
